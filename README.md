@@ -1,273 +1,120 @@
-# Proyecto-II-GymConnect
+<div align="center">
 
-GymConnect: Sistema de gestión de gimnasio con autenticación de usuarios, gestión de clases, tienda integrada y perfiles personalizados. Desarrollado con React y Node.js como parte de la materia Proyecto II.
+# 🏋️ GymConnect
 
----
+**Plataforma web full stack para gimnasios: reserva de clases, roles, tienda online y panel de administración.**
 
-Este proyecto es desarrollado por el grupo 5°1 como parte de la materia Proyecto II.
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Node](https://img.shields.io/badge/Node.js-Express-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![Sequelize](https://img.shields.io/badge/ORM-Sequelize-52B0E7?style=flat-square&logo=sequelize&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
+![JWT](https://img.shields.io/badge/auth-JWT%20%2B%20bcrypt-F05032?style=flat-square)
 
-## Integrantes del Grupo
+[Funcionalidades](#funcionalidades) · [Arquitectura](#arquitectura) · [Cómo correrlo](#cómo-correrlo) · [API](#api) · [Manual de usuario](Manual_Usuario_GymConnect%20(1).docx.pdf)
 
-- Lautaro Palombo
-- Carolina Lobo
-- Lucas Haedo
-- Thomas Barrera
-- Santiago Lavorgnia
+</div>
 
----
+## Qué resuelve
 
-## Visión del Proyecto
+Un gimnasio suele manejar socios, horarios de clases y venta de productos por separado. GymConnect junta todo en una sola aplicación: los socios reservan cupos y compran en la tienda, los profesores publican sus clases y el administrador controla usuarios y permisos.
 
-GymConnect es un sistema de gestión integral para gimnasios que permite a los miembros gestionar su perfil, visualizar clases disponibles y reservar cupos. El sistema contempla diferentes roles de usuario (administrador, entrenador y cliente) con permisos específicos para cada uno. Incluye una tienda integrada y un sistema robusto de persistencia de datos.
+Proyecto académico de la materia *Proyecto II* (ET 36), desarrollado en equipo.
 
----
+## Funcionalidades
 
-## Stack Tecnológico
+| Rol | Qué puede hacer |
+|---|---|
+| 👤 **Cliente** | Registrarse, editar su perfil, ver clases, inscribirse y desinscribirse, comprar en la tienda y ver su historial de compras |
+| 🧑‍🏫 **Profesor** | Crear y gestionar sus clases con cupos y horarios |
+| 🛠️ **Administrador** | Gestionar usuarios, cambiar roles, eliminar cuentas y aprobar o rechazar solicitudes de profesor |
 
-### Frontend
-- React 18.3.1
-- Vite 5.4.10
-- React Router DOM 7.0.1
-- Axios para peticiones HTTP
-- CSS personalizado con diseño responsive
+Además:
 
-### Backend
-- Node.js con Express 4.21.2
-- Sequelize 6.37.5 (ORM)
-- SQLite (desarrollo local con persistencia real)
-- CORS para peticiones cross-origin
-- Dotenv para manejo de variables de entorno
-- Nodemailer para envío de emails
+- 🔐 **Autenticación** con JWT y contraseñas hasheadas con bcrypt.
+- 📩 **Solicitud para ser profesor**, con aprobación del admin y envío automático de emails (Nodemailer).
+- 🛒 **Tienda** con catálogo, carrito lateral y órdenes de compra.
+- 💾 **Persistencia real** en SQLite: los datos sobreviven al reinicio.
+- 📱 Interfaz **responsive**.
 
----
+## Stack
 
-## Características Principales
+| Capa | Tecnologías |
+|---|---|
+| Frontend | React 19, Vite 7, React Router 7, Axios, Context API |
+| Backend | Node.js, Express 4, Sequelize 6, JWT (`jsonwebtoken`), bcrypt, Nodemailer |
+| Base de datos | SQLite (se crea y sincroniza sola al iniciar) |
 
-### Módulos Implementados
+## Arquitectura
 
-- **Autenticación de Usuarios:** Sistema de registro y login con validación y seguridad.
-- **Gestión de Perfiles:** Los usuarios pueden ver y editar su información personal.
-- **Sistema de Roles:** Diferenciación entre administrador, entrenador y cliente con permisos en backend y frontend.
-- **Gestión de Clases:** Visualización, creación y eliminación de clases, con control de cupos y horarios.
-- **Inscripción a Clases:** Los clientes pueden inscribirse y desinscribirse de clases disponibles.
-- **Dashboard Personalizado:** Panel de control con información relevante según el rol del usuario.
-- **Panel de Administración:** Gestión y eliminación de usuarios, cambio de roles y aprobación de solicitudes para profesores.
-- **Sistema de Solicitudes de Profesor:** Los usuarios pueden solicitar ser profesores, con aprobación por admin y envío automático de emails.
-- **Tienda Integrada:** Catálogo de productos con interfaz clara y funcional.
-- **Persistencia Completa:** Datos guardados en SQLite que no se pierden tras cerrar sesión o reiniciar.
-- **Generación Automática de Emails:** El sistema genera automáticamente emails corporativos para nuevos profesores.
-- **Favicon Personalizado:** Logo del proyecto en todas las pestañas del navegador.
-- **Diseño Responsive:** Interfaz moderna y adaptable a diferentes dispositivos.
+```
+backend/
+└── src/
+    ├── config/        base de datos, JWT y email
+    ├── middlewares/   verificación de token y roles
+    ├── models/        User, Role, Class, Enrollment, ProfesorRequest, Product, Order, OrderItem
+    ├── routes/        auth, class, enrollment, profesor, admin, shop
+    └── server.js      punto de entrada
 
----
+frontend/
+└── src/
+    ├── components/    Navbar, ClassCard, ProductCard, CartSideBar
+    ├── contexts/      AuthContext (sesión)
+    ├── pages/         Home, Login, Register, Dashboard, Classes, MyClasses,
+    │                  Tienda, Cart, Purchases, Profile, AdminPanel, SolicitarProfesor
+    └── services/      cliente de la API
+```
 
-## Estructura del Proyecto
-Proyecto-II-GymConnect/
-├── backend/ # Servidor Express y Sequelize
-│ ├── src/
-│ │ ├── config/
-│ │ │ ├── initbd.js # Configuración SQLite
-│ │ │ └── email.js # Configuración de emails
-│ │ ├── models/ # Modelos Sequelize
-│ │ │ ├── User.js
-│ │ │ ├── Class.js
-│ │ │ ├── Enrollment.js
-│ │ │ ├── ProfesorRequest.js
-│ │ │ ├── Product.js
-│ │ │ └── asociacion.js
-│ │ └── routes/ # Rutas API
-│ │ ├── auth.routes.js
-│ │ ├── class.routes.js
-│ │ ├── enrollment.routes.js
-│ │ ├── profesor.routes.js
-│ │ ├── admin.routes.js
-│ │ └── shop.routes.js
-│ ├── server.js # Punto de entrada backend
-│ ├── package.json
-│ ├── .env.example
-│ └── database.sqlite # Base de datos (generada automáticamente)
-│
-├── frontend/ # React + Vite
-│ ├── src/
-│ │ ├── components/ # Componentes reutilizables
-│ │ ├── pages/ # Páginas principales
-│ │ ├── services/ # APIs y servicios
-│ │ ├── contexts/ # Context API
-│ │ ├── App.jsx
-│ │ ├── main.jsx
-│ │ └── index.css
-│ ├── public/ # Assets estáticos
-│ ├── package.json
-│ └── vite.config.js
-│
-└── README.md
+Las relaciones entre modelos (usuarios ↔ clases mediante inscripciones, órdenes ↔ productos) se definen en `models/asociacion.js`.
 
+## Cómo correrlo
 
----
+Necesitás **Node.js 18+** y npm.
 
-## Instrucciones de Instalación
-
-### Requisitos Previos
-- Node.js (v16+)
-- npm o yarn
-
-### 1. Clonar el repositorio
-
-git clone https://github.com/lobocarolinael36-boop/Proyecto-II-GymConnect.git
+```bash
+git clone https://github.com/carolinalobo-dev/Proyecto-II-GymConnect.git
 cd Proyecto-II-GymConnect
 
-### 2. Configurar Backend
-
+# Backend  →  http://localhost:5000
 cd backend
 npm install
-
-Crear un archivo `.env` en la carpeta `backend`:
-
-PORT=5000
-EMAIL_USER=tu_email@gmail.com
-EMAIL_PASSWORD=tu_app_password
-
-### 3. Configurar Frontend
-
-cd ../frontend
-npm install
-
-
----
-
-## Ejecución del Proyecto
-
-### Backend
-
-cd backend
+cp .env.example .env     # completá JWT_SECRET y, si querés emails, los datos SMTP
 npm run dev
 
-El backend corre en `http://localhost:5000`.
-
-### Frontend
-
+# Frontend  →  http://localhost:5173  (en otra terminal)
 cd frontend
+npm install
 npm run dev
+```
 
-El frontend corre en `http://localhost:5173`.
+Al iniciar por primera vez, el backend crea las tablas, los roles, clases y productos de ejemplo, y un usuario administrador:
 
----
+| Usuario | Email | Contraseña |
+|---|---|---|
+| Admin | `admin@gymconnect.com` | `admin123` |
 
-## API Endpoints Principales
+> Credenciales de demostración para desarrollo local. Cambialas antes de cualquier despliegue.
 
-### Autenticación
-- `POST /api/auth/register` - Registrar nuevo usuario
-- `POST /api/auth/login` - Iniciar sesión
-- `GET /api/auth/profile` - Obtener perfil (requiere login)
-- `PUT /api/auth/profile` - Actualizar perfil
-- `DELETE /api/auth/account` - Eliminar cuenta
+## API
 
-### Clases
-- `GET /api/clases` - Obtener todas las clases
-- `GET /api/clases/:id` - Obtener clase por ID
-- `POST /api/clases` - Crear nueva clase (solo profesores/admin)
-- `GET /api/clases/:id/instructor` - Obtener clases por instructor
+Rutas principales (prefijo `/api`):
 
-### Inscripciones
-- `POST /api/inscripciones` - Inscribirse a una clase
-- `DELETE /api/inscripciones/:id` - Desinscribirse de una clase
-- `GET /api/inscripciones/usuario/:id` - Obtener inscripciones del usuario
+| Módulo | Endpoints |
+|---|---|
+| **Auth** | `POST /auth/register` · `POST /auth/login` · `GET /auth/validar-token` · `POST /auth/logout` |
+| **Tienda** | `GET /shop/productos` · `POST /shop/ordenes` · `GET /shop/mis-compras` |
+| **Clases, inscripciones, solicitudes de profesor y administración** | definidos en `routes/class`, `enrollment`, `profesor` y `admin` |
 
-### Solicitudes de Profesor
-- `POST /api/profesor/solicitar` - Enviar solicitud para ser profesor
-- `GET /api/profesor` - Obtener todas las solicitudes (solo admin)
-- `POST /api/profesor/:id/aprobar` - Aprobar solicitud (solo admin)
-- `POST /api/profesor/:id/rechazar` - Rechazar solicitud (solo admin)
+Las rutas protegidas requieren el token JWT en el encabezado `Authorization`.
 
-### Administración
-- `GET /api/admin/usuarios` - Obtener lista de usuarios
-- `PATCH /api/admin/usuarios/:id/cambiar-rol` - Cambiar rol de usuario
-- `DELETE /api/admin/usuarios/:id` - Eliminar usuario
+## Próximas mejoras
 
-### Tienda
-- `GET /api/shop/productos` - Obtener todos los productos
-- `POST /api/shop/compra` - Realizar una compra
-
----
-
-## Usuarios de Prueba
-
-Al iniciar el backend se crean automáticamente:
-
-- **Admin:**
-  - Email: `admin@gymconnect.com`
-  - Contraseña: `admin123`
-
-- **Profesor de Ejemplo:**
-  - Email: `carlos.profesor@profesor.gymconnect.com`
-  - Contraseña: `profesor123`
-
----
-
-## Mejoras Realizadas en Esta Versión
-
-✅ **Migración a SQLite** con persistencia real en lugar de almacenamiento temporal.
-
-✅ **Sistema de Solicitudes de Profesor** con aprobación por admin y envío automático de emails.
-
-✅ **Corrección de Generación de Emails Corporativos** (formato: nombre.profesor@profesor.gymconnect.com).
-
-✅ **Panel Administrador Funcional** para gestionar usuarios, cambiar roles y eliminar cuentas.
-
-✅ **Soporte Completo de Roles** (admin, profesor, cliente) con permisos diferenciados.
-
-✅ **Tienda Integrada** con catálogo de productos.
-
-✅ **Inscripción y Gestión de Clases** completamente funcional.
-
-✅ **Favicon Personalizado** para mejor branding.
-
-✅ **Logout, Registro y Edición de Perfil** operativos.
-
-✅ **Backend Robusto** con rutas seguras y fáciles de mantener.
-
----
-
-## Próximas Mejoras
-
-- Sistema de notificaciones en tiempo real.
+- Notificaciones en tiempo real.
 - Feed social con comentarios y reseñas de clases.
-- Sistema de pagos integrado.
+- Pasarela de pagos.
 - Logros y gamificación.
-- Exportación de reportes.
-- Sistema de mensajería entre usuarios.
+- Reportes exportables.
 
----
+## Autora
 
-## Notas Técnicas
-
-### Base de Datos
-La base de datos SQLite se sincroniza automáticamente al iniciar el backend. Los archivos `inicialización.sql` no son necesarios ya que Sequelize maneja la creación de tablas.
-
-### Asociaciones de Modelos
-Los modelos están conectados a través del archivo `asociacion.js`, que define las relaciones Many-to-Many entre usuarios y clases mediante la tabla de inscripciones.
-
-### Seguridad
-- Las contraseñas se almacenan como texto plano (en desarrollo). Para producción, usar bcrypt.
-- El JWT (si se implementa) debe almacenarse en localStorage o sessionStorage.
-- CORS está habilitado solo para desarrollo local.
-
----
-
-## Licencia
-
-Proyecto 100% educativo para Proyecto II.
-
----
-
-## Contacto
-
-Grupo 5°1 - Proyecto II
-
-[GitHub Repo](https://github.com/lobocarolinael36-boop/Proyecto-II-GymConnect)
-
----
-
-¡Gracias por usar GymConnect! 🏋️‍♀️💪
-
-
+**Carolina Lobo** · [LinkedIn](https://www.linkedin.com/in/carolina-lobo-469705297) · lobocarolina99@gmail.com
